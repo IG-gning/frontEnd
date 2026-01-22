@@ -32,7 +32,7 @@ const Layout = ({ children }) => {
       {/* SIDEBAR */}
       <div  
            className="bg-dark d-flex flex-column">
-        <Sidebar show={showSidebar} />
+        <Sidebar show={showSidebar}  closeSidebar={() => setShowSidebar(false)} />
       </div>
 
       {/* ZONE DROITE */}
