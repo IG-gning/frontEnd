@@ -1,0 +1,79 @@
+.login-bg {
+  background: url("../assets/photoFont.jpeg") no-repeat center center;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.login-box {
+  width: 380px;
+  background: #fff;
+  border-radius: 6px;
+  /* overflow: hidden; */
+}
+
+.login-header {
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-weight: bold;
+}
+
+.login-form {
+  padding: 25px;
+  /* min-height: 380px; */
+}
+
+.input-dark {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #555;
+  border-radius: 0;
+  color: #000;
+}
+
+.input-dark:focus {
+  outline: none;
+  /* box-shadow: none;
+  border-bottom: 2px solid ; */
+}
+
+.input-dark::placeholder {
+  color: #999;
+}
+
+.link {
+  cursor: pointer;
+  color: #f1c40f;
+}
+
+
+.link-box {
+  display: inline-block;
+  background: #555555;
+  color: #f1c40f;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+
+@media (max-width: 768px) {
+  .login-box {
+    width: 90%;
+    margin: auto;
+  }
+
+  .login-form {
+    padding: 20px;
+  }
+
+  .login-header h3 {
+    font-size: 20px;
+  }
+}

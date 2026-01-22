@@ -1,0 +1,18 @@
+.stat-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 22px;
+}
+
+/* Couleurs */
+.stat-info { background-color: #A88ADD; }
+.stat-success { background-color: #0CC2AA; }
+.stat-warning { background-color: #FCC100; }
+.stat-danger { background-color: #F90000; }
+.stat-primary { background-color: #9C27B0; }
+.stat-secondary { background-color: #1565C0; }

@@ -1,0 +1,22 @@
+.sidebar {
+  width: 300px;
+  min-height: 100vh;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;   /* IMPORTANT */
+    transform: translateX(-100%);
+    
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+
+  }
+}
