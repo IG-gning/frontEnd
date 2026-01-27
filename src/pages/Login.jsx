@@ -12,64 +12,66 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const BASE_URL = "https://projet-01-backend-1.onrender.com";
 
-  try {
-    const response = await fetch("http://localhost:8000/inscription/login/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: email,
-        mot_de_passe: passWord,
-      }),
-    });
+  // -------- LOGIN --------
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem("isAuth", "true");
-      alert(data.message); // Optional: message succès
-      navigate("/dashboard");
-    } else if (response.status === 401) {
-      alert("Email ou mot de passe incorrect");
-    } else {
-      alert("Erreur serveur, réessaie plus tard");
+    try {
+      const response = await fetch("http://127.0.0.1:8000/inscription/login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          mot_de_passe: passWord,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Stocker JWT et état authentifié
+        localStorage.setItem("isAuth", "true");
+        localStorage.setItem("access_token", data.access);
+        localStorage.setItem("refresh_token", data.refresh);
+
+        alert(data.message);
+        navigate("/dashboard");
+      } else if (response.status === 401) {
+        alert("Email ou mot de passe incorrect");
+      } else {
+        alert("Erreur serveur, réessaie plus tard");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erreur réseau, réessaie plus tard");
     }
-  } catch (error) {
-    console.error(error);
-    alert("Erreur réseau, réessaie plus tard");
-  }
-};
+  };
 
-
-
+  // -------- FORGOT PASSWORD --------
   const handleForgot = (e) => {
     e.preventDefault();
     alert("Un email de réinitialisation a été envoyé !");
     setActiveForm("login");
   };
 
+  // -------- SIGNUP --------
   const handleSignup = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://localhost:8000/inscription/ins/register/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            nom: nameSignup,
-            email: emailSignup,
-            mot_de_passe: passwordSignup,
-          }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/inscription/ins/register/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nom: nameSignup,
+          email: emailSignup,
+          mot_de_passe: passwordSignup,
+        }),
+      });
 
       if (response.ok) {
-        // Inscription réussie
         alert("Compte créé avec succès !");
         setActiveForm("login");
       } else {
@@ -103,6 +105,7 @@ const handleSubmit = async (e) => {
               placeholder="E-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
             <input
               type="password"
@@ -110,14 +113,12 @@ const handleSubmit = async (e) => {
               placeholder="Mot de passe"
               value={passWord}
               onChange={(e) => setPassWord(e.target.value)}
+              required
             />
             <p className="d-flex align-items-center h6 gap-2">
               <input type="checkbox" /> Gardez-moi connecté
             </p>
-            <button
-              className="btn w-100 text-white"
-              style={{ background: "#555555" }}
-            >
+            <button className="btn w-100 text-white" style={{ background: "#555555" }}>
               Se connecter
             </button>
           </form>
@@ -134,11 +135,9 @@ const handleSubmit = async (e) => {
               type="email"
               className="form-control input-dark mb-4"
               placeholder="Votre e-mail"
+              required
             />
-            <button
-              className="btn w-100 text-white"
-              style={{ background: "#555555" }}
-            >
+            <button className="btn w-100 text-white" style={{ background: "#555555" }}>
               Envoyer
             </button>
           </form>
@@ -147,7 +146,6 @@ const handleSubmit = async (e) => {
         {activeForm === "signup" && (
           <form onSubmit={handleSignup} className="login-form">
             <h5 className="text-center mb-4">Créer un compte</h5>
-
             <input
               type="text"
               className="form-control input-dark mb-3 pb-3"
@@ -156,7 +154,6 @@ const handleSubmit = async (e) => {
               onChange={(e) => setNameSignup(e.target.value)}
               required
             />
-
             <input
               type="email"
               className="form-control input-dark mb-3 pb-3"
@@ -165,7 +162,6 @@ const handleSubmit = async (e) => {
               onChange={(e) => setEmailSignup(e.target.value)}
               required
             />
-
             <input
               type="password"
               className="form-control input-dark mb-4 pb-3"
@@ -174,69 +170,61 @@ const handleSubmit = async (e) => {
               onChange={(e) => setPasswordSignup(e.target.value)}
               required
             />
-
             <p className="d-flex align-items-center h6 gap-2">
               <input type="checkbox" /> Accepter les termes et la politique
             </p>
-
-            <button
-              className="btn w-100 text-white"
-              style={{ background: "#555555" }}
-            >
+            <button className="btn w-100 text-white" style={{ background: "#555555" }}>
               S’inscrire
             </button>
           </form>
         )}
       </div>
-     {/* Liens pour LOGIN */}
-{activeForm === "login" && (
-  <div className="text-center mt-3 text-white">
-    <p className="link mb-2" onClick={() => setActiveForm("forgot")}>
-      Mot de passe oublié ?
-    </p>
-    <p>
-      Vous n'avez pas de compte ?
-      <span className="link ms-1" onClick={() => setActiveForm("signup")}>
-        S'inscrire
-      </span>
-    </p>
-  </div>
-)}
 
-{/* Liens pour SIGNUP */}
-{activeForm === "signup" && (
-  <div className="text-center mt-3 text-white">
-    <p>
-      Vous avez déjà un compte ?
-      <span className="link ms-1" onClick={() => setActiveForm("login")}>
-        Se connecter
-      </span>
-    </p>
-  </div>
-)}
+      {/* Liens pour LOGIN */}
+      {activeForm === "login" && (
+        <div className="text-center mt-3 text-white">
+          <p className="link mb-2" onClick={() => setActiveForm("forgot")}>
+            Mot de passe oublié ?
+          </p>
+          <p>
+            Vous n'avez pas de compte ?
+            <span className="link ms-1" onClick={() => setActiveForm("signup")}>
+              S'inscrire
+            </span>
+          </p>
+        </div>
+      )}
 
-{/* Liens pour FORGOT */}
-{activeForm === "forgot" && (
-  <div className="text-center mt-3 text-white">
-    <p>
-      Vous n'avez pas de compte ?
-      <span className="link ms-1" onClick={() => setActiveForm("signup")}>
-        S'inscrire
-      </span>
-    </p>
-    <p>
-      Revenir à la
-      <span className="link ms-1" onClick={() => setActiveForm("login")}>
-        connexion
-      </span>
-    </p>
-  </div>
-)}
+      {/* Liens pour SIGNUP */}
+      {activeForm === "signup" && (
+        <div className="text-center mt-3 text-white">
+          <p>
+            Vous avez déjà un compte ?
+            <span className="link ms-1" onClick={() => setActiveForm("login")}>
+              Se connecter
+            </span>
+          </p>
+        </div>
+      )}
 
-
-
+      {/* Liens pour FORGOT */}
+      {activeForm === "forgot" && (
+        <div className="text-center mt-3 text-white">
+          <p>
+            Vous n'avez pas de compte ?
+            <span className="link ms-1" onClick={() => setActiveForm("signup")}>
+              S'inscrire
+            </span>
+          </p>
+          <p>
+            Revenir à la
+            <span className="link ms-1" onClick={() => setActiveForm("login")}>
+              connexion
+            </span>
+          </p>
+        </div>
+      )}
     </div>
-
   );
 };
 
