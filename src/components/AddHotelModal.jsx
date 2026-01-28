@@ -1,132 +1,256 @@
 import { useState, useRef } from "react";
-import axios from "axios";
+import API from "../api";
 
-const AddHotelModal = ({ show, onClose, onAdd }) => {
+
+const AddHotelModal = ({ show, onClose, onAdd, apiUrl }) => {
   const [nom, setNom] = useState("");
-  const [email, setEmail] = useState("");
+  const [ville, setVille] = useState("");
   const [prix, setPrix] = useState("");
   const [adresse, setAdresse] = useState("");
-  const [numero, setNumero] = useState("");
-  const [devise, setDevise] = useState("FXOF");
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fileInputRef = useRef();
+  const API_URL = process.env.REACT_APP_API_URL || "https://projet-01-backend-1.onrender.com";
 
   if (!show) return null;
 
-  const handleSubmit = async () => {
-    if (!nom || !email || !prix || !adresse || !numero || !devise) {
-      alert("Veuillez remplir tous les champs");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (!nom || !ville || !prix || !adresse) {
+      setError("Veuillez remplir tous les champs obligatoires");
       return;
     }
+
+    setLoading(true);
+    setError(null);
 
     // Crée un FormData pour l'envoi des fichiers
     const formData = new FormData();
     formData.append("nom", nom);
-    formData.append("email", email);
+    formData.append("ville", ville);
     formData.append("prix", prix);
     formData.append("adresse", adresse);
-    formData.append("numero", numero); // ⚠️ pas d'accent
-    formData.append("devise", devise);
-    if (image) formData.append("image", image);
+    
+    if (image) {
+      formData.append("image", image);
+    }
 
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/hotels/addHotel/",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+    const res = await API.post(
+  `/hotels/addHotel/`,
+  formData,
+  { headers: { "Content-Type": "multipart/form-data" } }
+);
 
-      alert("Hôtel ajouté avec succès !");
+
+      console.log("Hôtel créé:", res.data);
       onAdd(res.data); // Met à jour la liste dans React
-      onClose();
-
+      
       // Reset
       setNom("");
-      setEmail("");
+      setVille("");
       setPrix("");
       setAdresse("");
-      setNumero("");
-      setDevise("FXOF");
       setImage(null);
+      setError(null);
+      
+      onClose();
 
     } catch (err) {
-      console.log(err.response?.data || err);
-      alert("Erreur lors de l'ajout de l'hôtel.");
+      console.error("Erreur ajout hôtel:", err);
+      const errorMsg = err.response?.data?.error || 
+                      err.response?.data?.message || 
+                      "Erreur lors de l'ajout de l'hôtel.";
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    if (!loading) {
+      setError(null);
+      onClose();
     }
   };
 
   return (
-    <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
-      <div className="modal-dialog">
-        <div className="modal-content" style={{ width: "700px", color: "#555555" }}>
+    <div 
+      className="modal fade show d-block" 
+      style={{ background: "rgba(0,0,0,0.5)" }}
+      onClick={handleClose}
+    >
+      <div 
+        className="modal-dialog modal-dialog-centered"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-content" style={{ maxWidth: "700px", color: "#555555" }}>
           <div className="modal-header border-bottom">
-            <h6 className="modal-title">
-              <span onClick={onClose} style={{ cursor: "pointer" }}>&larr;</span> CREER UN NOUVEAU HOTEL
+            <h6 className="modal-title d-flex align-items-center gap-2">
+              <span 
+                onClick={handleClose} 
+                style={{ cursor: "pointer", fontSize: "1.5rem" }}
+                className="text-secondary"
+              >
+                &larr;
+              </span> 
+              CRÉER UN NOUVEAU HÔTEL
             </h6>
           </div>
 
-          <div className="modal-body d-flex gap-4" style={{ width: "700px" }}>
-            <div className="w-100">
-              <div className="mb-3">
-                <label>Nom de l'hôtel</label>
-                <input className="form-control" value={nom} onChange={(e) => setNom(e.target.value)} />
+          <form onSubmit={handleSubmit}>
+            <div className="modal-body">
+              {/* Message d'erreur */}
+              {error && (
+                <div className="alert alert-danger" role="alert">
+                  {error}
+                </div>
+              )}
+
+              <div className="row">
+                {/* Colonne gauche */}
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Nom de l'hôtel <span className="text-danger">*</span>
+                    </label>
+                    <input 
+                      type="text"
+                      className="form-control" 
+                      value={nom} 
+                      onChange={(e) => setNom(e.target.value)}
+                      placeholder="Ex: Hôtel Paradise"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Ville <span className="text-danger">*</span>
+                    </label>
+                    <input 
+                      type="text"
+                      className="form-control" 
+                      value={ville} 
+                      onChange={(e) => setVille(e.target.value)}
+                      placeholder="Ex: Dakar"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Prix par nuit (XOF) <span className="text-danger">*</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      className="form-control" 
+                      value={prix} 
+                      onChange={(e) => setPrix(e.target.value)}
+                      placeholder="Ex: 25000"
+                      min="0"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Colonne droite */}
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Adresse complète <span className="text-danger">*</span>
+                    </label>
+                    <textarea 
+                      className="form-control" 
+                      value={adresse} 
+                      onChange={(e) => setAdresse(e.target.value)}
+                      placeholder="Ex: Avenue Cheikh Anta Diop, Dakar"
+                      rows="4"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="mb-3">
-                <label>E-mail</label>
-                <input className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-              <div className="mb-3">
-                <label>Prix par nuit</label>
-                <input type="number" className="form-control" value={prix} onChange={(e) => setPrix(e.target.value)} />
+
+              {/* Section image */}
+              <div className="mt-3">
+                <label className="form-label">
+                  Photo de l'hôtel
+                  <small className="text-muted ms-2">(Optionnel)</small>
+                </label>
+                <div 
+                  className="text-center border rounded-3 p-3" 
+                  style={{ cursor: "pointer", background: "#f8f9fa" }}
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  {image ? (
+                    <div className="position-relative">
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt="Aperçu"
+                        style={{ 
+                          maxHeight: "200px", 
+                          maxWidth: "100%",
+                          objectFit: "cover",
+                          borderRadius: "8px"
+                        }}
+                      />
+                      <div className="mt-2">
+                        <small className="text-success">✓ Image sélectionnée: {image.name}</small>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="py-4">
+                      <div style={{ fontSize: "3rem", color: "#dee2e6" }}>📷</div>
+                      <p className="mb-0 text-muted">
+                        Cliquez pour ajouter une photo
+                      </p>
+                      <small className="text-muted">
+                        Formats acceptés: JPG, PNG, GIF
+                      </small>
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                  accept="image/*"
+                  onChange={(e) => setImage(e.target.files[0])}
+                />
               </div>
             </div>
 
-            <div className="w-100">
-              <div className="mb-3">
-                <label>Adresse</label>
-                <input className="form-control" value={adresse} onChange={(e) => setAdresse(e.target.value)} />
-              </div>
-              <div className="mb-3">
-                <label>Numéro de téléphone</label>
-                <input className="form-control" value={numero} onChange={(e) => setNumero(e.target.value)} />
-              </div>
-              <div className="mb-3">
-                <label>Devise</label>
-                <select className="form-control" value={devise} onChange={(e) => setDevise(e.target.value)}>
-                  <option>FXOF</option>
-                  <option>Dollar</option>
-                  <option>Euro</option>
-                  <option>FCFA</option>
-                </select>
-              </div>
+            <div className="modal-footer">
+              <button 
+                type="button"
+                className="btn btn-secondary" 
+                onClick={handleClose}
+                disabled={loading}
+              >
+                Annuler
+              </button>
+              <button 
+                type="submit"
+                className="btn text-white" 
+                style={{ background: "#555555" }}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" />
+                    Enregistrement...
+                  </>
+                ) : (
+                  "Enregistrer"
+                )}
+              </button>
             </div>
-          </div>
-
-          <p className="ms-3">Ajouter une photo</p>
-          <div className="text-center mb-3 me-3 ms-3 border rounded-3">
-            <img
-              src={image ? URL.createObjectURL(image) : "/images/img00.png"}
-              alt="hôtel"
-              style={{ height: "120px", padding: "10px", cursor: "pointer" }}
-              onClick={() => fileInputRef.current.click()}
-            />
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              accept="image/*"
-              onChange={(e) => setImage(e.target.files[0])}
-            />
-          </div>
-
-          <div className="modal-footer">
-            <button className="btn text-white" style={{ background: "#555555" }} onClick={handleSubmit}>
-              Enregistrer
-            </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>

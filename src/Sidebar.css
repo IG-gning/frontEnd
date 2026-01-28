@@ -1,0 +1,33 @@
+.sidebar {
+  background-image: url("./assets/photoFont.jpeg") ; /* remplace par ton chemin */
+  background-size: cover;
+  background-position: center;
+  
+}
+
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin-top: -10px;
+}
+
+.menu li {
+  margin-bottom: 5px;
+  font-size: 18.66px;
+  font-weight: 500;
+  font-size: Medium;
+}
+
+.menu-link {
+  display: block;
+  padding: 12px;
+  text-decoration: none;
+  color: white;
+  transition: background 0.2s;
+}
+
+.menu-link.active {
+  background-color: #dbdada; /* gris actif */
+  color: black;
+}

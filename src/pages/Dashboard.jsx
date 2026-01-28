@@ -6,7 +6,7 @@ const Dashboard = () => {
   const [stats, setStats] = useState([]);
 
   useEffect(() => {
-      axios.get("http://127.0.0.1:8000/api/dashboard/")
+      axios.get("https://projet-01-backend-1.onrender.com/api/dashboard/")
 
       .then(res => {
         const data = res.data;
