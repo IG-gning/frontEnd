@@ -6,11 +6,9 @@ import "./login.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [passWord, setPassWord] = useState("");
-  const [activeForm, setActiveForm] = useState("login");
 
   const navigate = useNavigate();
 
-  // -------- LOGIN --------
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -39,33 +37,31 @@ const Login = () => {
       </div>
 
       <div className="login-box">
-        {activeForm === "login" && (
-          <form onSubmit={handleLogin} className="login-form">
-            <h5 className="text-center mb-4">Connectez-vous en tant qu’admin</h5>
+        <form onSubmit={handleLogin} className="login-form">
+          <h5 className="text-center mb-4">Connectez-vous en tant qu’admin</h5>
 
-            <input
-              type="email"
-              className="form-control input-dark mb-4"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+          <input
+            type="email"
+            className="form-control input-dark mb-4"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-            <input
-              type="password"
-              className="form-control input-dark mb-4 border-bottom"
-              placeholder="Mot de passe"
-              value={passWord}
-              onChange={(e) => setPassWord(e.target.value)}
-              required
-            />
+          <input
+            type="password"
+            className="form-control input-dark mb-4 border-bottom"
+            placeholder="Mot de passe"
+            value={passWord}
+            onChange={(e) => setPassWord(e.target.value)}
+            required
+          />
 
-            <button className="btn w-100 text-white" style={{ background: "#555555" }}>
-              Se connecter
-            </button>
-          </form>
-        )}
+          <button className="btn w-100 text-white" style={{ background: "#555555" }}>
+            Se connecter
+          </button>
+        </form>
       </div>
     </div>
   );
