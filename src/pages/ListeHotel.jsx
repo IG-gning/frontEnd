@@ -30,7 +30,7 @@ const ListeHotel = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-4">
       
 
       <AddHotelModal
@@ -44,7 +44,7 @@ const ListeHotel = () => {
 
       <div className="row">
         {hotels.map((hotel) => (
-          <div key={hotel.id} className="col-md-3 mb-3">
+          <div key={hotel.id} className="col-md-4 mb-3">
             <div className="card h-100 shadow-sm">
               <img
                 src={getImageUrl(hotel)}
