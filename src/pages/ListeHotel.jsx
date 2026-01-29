@@ -26,39 +26,35 @@ const ListeHotel = () => {
   const addHotel = (newHotel) => setHotels([newHotel, ...hotels]);
 
   const getImageUrl = (hotel) => {
-    if (hotel.image) return hotel.image;
-    return "https://placehold.co/300x200?text=No+Image";
+    return hotel.image || "https://placehold.co/300x180?text=Image+introuvable";
   };
 
   return (
     <div className="container">
-      <button className="btn btn-primary mb-3" onClick={() => setShowModal(true)}>
-        Ajouter un hôtel
-      </button>
+      
 
-      <AddHotelModal show={showModal} onClose={() => setShowModal(false)} onAdd={addHotel} />
+      <AddHotelModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onAdd={addHotel}
+      />
 
       {loading && <p>Chargement...</p>}
-      {error && <p>{error}</p>}
+      {error && <p className="text-danger">{error}</p>}
 
       <div className="row">
         {hotels.map((hotel) => (
-          <div key={hotel.id} className="col-md-3 mb-4">
+          <div key={hotel.id} className="col-md-3 mb-3">
             <div className="card h-100 shadow-sm">
               <img
                 src={getImageUrl(hotel)}
                 alt={hotel.nom}
                 className="card-img-top"
                 style={{ height: "180px", objectFit: "cover" }}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "https://placehold.co/300x200?text=No+Image";
-                }}
               />
               <div className="card-body">
-                <h5>{hotel.nom}</h5>
-                <p>{hotel.ville}</p>
-                <p className="fw-bold">{hotel.prix} XOF</p>
+                <p className="text-danger ">{hotel.ville} <br /> <span className="fw-bold text-dark">{hotel.nom}</span></p>
+                <p>{hotel.prix} XOF <span style={{fontSize:"14px"}}> par nuit</span></p>
               </div>
             </div>
           </div>
