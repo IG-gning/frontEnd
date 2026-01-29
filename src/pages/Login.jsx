@@ -6,7 +6,6 @@ import "./login.css";
 const Login = () => {
   const navigate = useNavigate();
 
-  // State unique pour tous les champs
   const [activeForm, setActiveForm] = useState("login");
   const [formData, setFormData] = useState({
     email: "",
@@ -16,13 +15,11 @@ const Login = () => {
     passwordSignup: "",
   });
 
-  // Gestion des inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // -------- LOGIN --------
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -30,11 +27,9 @@ const Login = () => {
         email: formData.email,
         mot_de_passe: formData.passWord,
       });
-
       localStorage.setItem("isAuth", "true");
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
-
       alert(data.message);
       navigate("/dashboard");
     } catch (err) {
@@ -44,7 +39,6 @@ const Login = () => {
     }
   };
 
-  // -------- SIGNUP --------
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
@@ -53,7 +47,6 @@ const Login = () => {
         email: formData.emailSignup,
         mot_de_passe: formData.passwordSignup,
       });
-
       alert("Compte créé avec succès !");
       setActiveForm("login");
       setFormData({
@@ -72,21 +65,18 @@ const Login = () => {
     }
   };
 
-  // -------- FORGOT PASSWORD --------
   const handleForgot = (e) => {
     e.preventDefault();
     alert("Un email de réinitialisation a été envoyé !");
     setActiveForm("login");
   };
 
-  // Gestion du submit selon le formulaire actif
   const handleSubmit = (e) => {
     if (activeForm === "login") handleLogin(e);
     else if (activeForm === "signup") handleSignup(e);
     else if (activeForm === "forgot") handleForgot(e);
   };
 
-  // Inputs selon le formulaire actif
   const renderFormInputs = () => {
     switch (activeForm) {
       case "login":
@@ -213,7 +203,6 @@ const Login = () => {
         </form>
       </div>
 
-      {/* Liens pour changer de formulaire */}
       <div className="text-center mt-3 text-white">
         {activeForm === "login" && (
           <>
