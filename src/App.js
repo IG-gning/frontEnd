@@ -22,16 +22,17 @@ function App() {
           }
         />
 
-        <Route
-          path="/hotels"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <ListeHotel />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
+       <Route
+  path="/hotels"
+  element={
+    <ProtectedRoute>
+      <Layout>
+        <ListeHotel />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
+
       </Routes>
     </Router>
   );
