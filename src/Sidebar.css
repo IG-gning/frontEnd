@@ -1,9 +1,16 @@
+
+/* le vrai sidebar */
 .sidebar {
-  background-image: url("./assets/photoFont.jpeg") ; /* remplace par ton chemin */
+  flex: 1;  /* ✅ important : prend toute la hauteur de son parent */
+  color: white;
+  background-image: url("./assets/photoFont.jpeg");
   background-size: cover;
   background-position: center;
-  
+  transition: transform 0.3s ease;
 }
+
+  
+
 
 
 .menu {
